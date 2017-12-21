@@ -57,5 +57,5 @@ module.exports = function(sequelize, DataTypes) {
             defaultValue: "This user hasn't entered any information"
         }
     });
-    return user;
+    return User;
 };
