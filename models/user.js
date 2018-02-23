@@ -1,61 +1,48 @@
 //=====================
-//Model for user table
+//Model for users =====
 //=====================
-module.exports = function(sequelize, DataTypes) {
-    var User = sequelize.define('User', {
-        userName: {
-            type: DataTypes.STRING,
-            allowNull: false,
-            primaryKey: true,
-            validate: {
-                isAlphanumeric: true,
-                len: [8,25]
-            }
-        },
-        
-        password: {
-            type: DataTypes.STRING,
-            allowNull: false,
-            isAlphanumeric: true,
-            validate: {
-                len: [8, 1000]
-            }
-        },
-
-        gender: {
-            type: DataTypes.STRING,
-            allowNull:false,
-            validate: {
-                len: [1, 1]
-            }
-        },
-
-        seeking: {
-            type: DataTypes.STRING,
-            allowNull:false,
-            validate: {
-                len: [1, 1]
-            }
-        },
-
-        age: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-            validate: {
-                min: 18
-            }
-        },
-
-        img: {
-            type: DataTypes.STRING,
-            allowNull: true,
-        },
-
-        bio: {
-            type: DataTypes.STRING,
-            allowNull: true,
-            defaultValue: "This user hasn't entered any information"
+const mongoose = require('mongoose');
+const bcrypt = require('bcrypt-nodejs');
+const userSchema = new Schema({
+    username: {
+        type: String,
+        unique: true,
+        required: true,
+        trim: true
+    },
+    password: {
+        type: String,
+        required: true,
+        trim: true
+    },
+    gender: {
+        type: String,
+        maxlength: 1
+    },
+    seeking: {
+        type: String,
+        maxlength: 1
+    },
+    age: {
+        type: Number
+    },
+    img: {
+        type: String,
+        required: false,
+        defaullt:'/public/assets/img/user.png'
+    },
+    bio: {
+        type: String
+    }, 
+    rightSwipes: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: "User"
         }
-    });
-    return User;
+    ]
+});
+userSchema.methods.generateHash = function(password) {
+    return bcrypt.hashSync(password, bcrypt.getSaltSync(8), null);
 };
+const User = mongoose.model('User', userSchema);
+module.exports = User;
